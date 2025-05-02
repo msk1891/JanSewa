@@ -9,7 +9,7 @@ const RegisterScreen = ({ navigation }) => {
 
   const handleRegister = async () => {
     try {
-      await axios.post('http://localhost:5000/api/auth/register', {
+      await axios.post('http://192.168.174.141:5000/api/auth/register', { // Use your local IP here
         username,
         email,
         password,
@@ -21,6 +21,7 @@ const RegisterScreen = ({ navigation }) => {
       alert('Registration failed');
     }
   };
+  
 
   return (
     <View style={styles.container}>
