@@ -16,6 +16,7 @@ import SahayataAIScreen from './screens/SahayataAIScreen';
 import ChatBotScreen from './screens/ChatBotScreen';
 import ComplaintScreen from './screens/ComplaintScreen';
 import ProfileScreen from './screens/ProfileScreen';
+import PublicVoice from './screens/PublicVoice';
 
 const Stack = createNativeStackNavigator();
 
@@ -74,6 +75,7 @@ export default function App() {
           <Stack.Screen name="ChatBotScreen" component={ScreenWrapper(ChatBotScreen)} />
           <Stack.Screen name="ComplaintForm" component={ScreenWrapper(ComplaintScreen)} />
           <Stack.Screen name="Profile" component={ScreenWrapper(ProfileScreen)} />
+          <Stack.Screen name="PublicVoice" component={ScreenWrapper(PublicVoice)} />
         </Stack.Navigator>
       </NavigationContainer>
     </SafeAreaProvider>
