@@ -4,9 +4,8 @@ import {
   Text,
   TouchableOpacity,
   StyleSheet,
-  Image,
-  Animated,
   ScrollView,
+  Animated,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -15,11 +14,19 @@ const HomeScreen = () => {
   const navigation = useNavigation();
   const scale = useRef(new Animated.Value(1)).current;
 
+  // Button Animation
   const animateButton = () => {
-    Animated.sequence([
-      Animated.spring(scale, { toValue: 0.95, friction: 3, useNativeDriver: true }),
-      Animated.spring(scale, { toValue: 1, friction: 3, useNativeDriver: true }),
-    ]).start();
+    Animated.spring(scale, {
+      toValue: 0.95,
+      friction: 3,
+      useNativeDriver: true,
+    }).start(() => {
+      Animated.spring(scale, {
+        toValue: 1,
+        friction: 3,
+        useNativeDriver: true,
+      }).start();
+    });
   };
 
   const modules = [
@@ -35,11 +42,7 @@ const HomeScreen = () => {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Image source={require('../assets/icon.png')} style={styles.logo} />
-      <Text style={styles.title}>Uttarakhand AI Sewa</Text>
       <Text style={styles.subtitle}>Your AI-powered assistant for public services</Text>
-
-      
 
       {modules.map((mod, index) => (
         <TouchableOpacity
@@ -51,7 +54,7 @@ const HomeScreen = () => {
           }}
         >
           <Animated.View style={[{ transform: [{ scale }] }, styles.animatedBtn]}>
-            <Icon name={mod.icon} size={24} color="#fff" style={{ marginRight: 10 }} />
+            <Icon name={mod.icon} size={24} color="#ffffff" style={{ marginRight: 10 }} />
             <Text style={styles.buttonText}>{mod.name}</Text>
           </Animated.View>
         </TouchableOpacity>
@@ -62,43 +65,21 @@ const HomeScreen = () => {
 
 const styles = StyleSheet.create({
   container: {
-    paddingTop: 60,
+    paddingTop: 30,
     paddingBottom: 30,
     alignItems: 'center',
-    backgroundColor: '#f9fafb',
+    backgroundColor: '#F7F8F3', // Off-white neutral
     paddingHorizontal: 20,
-  },
-  logo: {
-    width: 150,
-    height: 150,
-    marginBottom: 20,
-    borderRadius: 10,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: '#1D4ED8',
-    marginBottom: 10,
   },
   subtitle: {
     fontSize: 18,
-    color: '#6B7280',
+    color: '#023047', // Midnight Blue
+    fontFamily: 'sans-serif', // Default system font
     marginBottom: 30,
     textAlign: 'center',
   },
-  sectionTitle: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: '#374151',
-    marginBottom: 20,
-    alignSelf: 'flex-start',
-  },
   moduleButton: {
-    backgroundColor: '#2563EB',
+    backgroundColor: '#2D6A4F', // Primary Color
     width: '100%',
     paddingVertical: 14,
     marginBottom: 15,
@@ -112,6 +93,7 @@ const styles = StyleSheet.create({
     color: '#ffffff',
     fontSize: 18,
     fontWeight: '600',
+    fontFamily: 'sans-serif', // Default system font
   },
   animatedBtn: {
     flexDirection: 'row',
