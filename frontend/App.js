@@ -17,6 +17,7 @@ import ChatBotScreen from './screens/ChatBotScreen';
 import ComplaintScreen from './screens/ComplaintScreen';
 import ProfileScreen from './screens/ProfileScreen';
 import PublicVoice from './screens/PublicVoice';
+import FarmerHelp from './screens/FarmerHelp';
 
 const Stack = createNativeStackNavigator();
 
@@ -76,6 +77,7 @@ export default function App() {
           <Stack.Screen name="ComplaintForm" component={ScreenWrapper(ComplaintScreen)} />
           <Stack.Screen name="Profile" component={ScreenWrapper(ProfileScreen)} />
           <Stack.Screen name="PublicVoice" component={ScreenWrapper(PublicVoice)} />
+          <Stack.Screen name="FarmerHelp" component={ScreenWrapper(FarmerHelp)} />
         </Stack.Navigator>
       </NavigationContainer>
     </SafeAreaProvider>
