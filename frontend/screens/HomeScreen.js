@@ -30,7 +30,7 @@ const HomeScreen = () => {
     { name: 'Tourist Guide', screen: 'TouristGuide', icon: 'map-outline' },
     { name: 'Farmer Support', screen: 'FarmerHelp', icon: 'leaf-outline' },
     { name: 'Gram Sabha', screen: 'PublicVoice', icon: 'megaphone-outline' },
-    { name: 'Plant Identifier', screen: 'PlantIdentifier', icon: 'leaf-outline' },
+    { name: 'Education', screen: 'Education', icon: 'book-outline' },
   ];
 
   return (
