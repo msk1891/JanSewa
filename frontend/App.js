@@ -18,6 +18,10 @@ import ComplaintScreen from './screens/ComplaintScreen';
 import ProfileScreen from './screens/ProfileScreen';
 import PublicVoice from './screens/PublicVoice';
 import FarmerHelp from './screens/FarmerHelp';
+import TouristGuide from './screens/TouristGuide';
+import DisasterAlert from './screens/DisasterAlert';
+import Emergency from './screens/Emergency';
+
 
 const Stack = createNativeStackNavigator();
 
@@ -78,6 +82,18 @@ export default function App() {
           <Stack.Screen name="Profile" component={ScreenWrapper(ProfileScreen)} />
           <Stack.Screen name="PublicVoice" component={ScreenWrapper(PublicVoice)} />
           <Stack.Screen name="FarmerHelp" component={ScreenWrapper(FarmerHelp)} />
+          <Stack.Screen name="TouristGuide" component={ScreenWrapper(TouristGuide)} />
+          <Stack.Screen name="DisasterAlert" component={ScreenWrapper(DisasterAlert)} />
+          <Stack.Screen name="Emergency" component={ScreenWrapper(Emergency)} />
+
+        
+
+          
+         
+
+          
+
+          
         </Stack.Navigator>
       </NavigationContainer>
     </SafeAreaProvider>
@@ -87,7 +103,7 @@ export default function App() {
 // ✅ Styles
 const styles = StyleSheet.create({
   header: {
-    backgroundColor: '#1D4ED8', // Blue shade
+    backgroundColor: '#1B5E20', // Blue shade
     paddingTop: 12,
     paddingBottom: 15,
     paddingHorizontal: 20,
