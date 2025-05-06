@@ -32,7 +32,7 @@ const HomeScreen = () => {
   const modules = [
     { name: 'AI Assistant (Chatbot)', screen: 'ChatBotScreen', icon: 'chatbubble-ellipses-outline' },
     { name: 'Complaint System', screen: 'ComplaintForm', icon: 'alert-circle-outline' },
-    { name: 'Emergency & Health', screen: 'EmergencyScreen', icon: 'medkit-outline' },
+    { name: 'Emergency & Health', screen: 'Emergency', icon: 'medkit-outline' },
     { name: 'Disaster Alert System', screen: 'DisasterAlert', icon: 'warning-outline' },
     { name: 'Tourist Guide', screen: 'TouristGuide', icon: 'map-outline' },
     { name: 'Farmer Support', screen: 'FarmerHelp', icon: 'leaf-outline' },

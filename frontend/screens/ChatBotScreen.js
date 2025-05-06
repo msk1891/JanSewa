@@ -1,38 +1,72 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+import React, { useState, useRef, useEffect } from 'react';
+import {
+  View, Text, TextInput, TouchableOpacity,
+  StyleSheet, ScrollView, KeyboardAvoidingView, Platform
+} from 'react-native';
 
 const ChatBotScreen = () => {
   const [messages, setMessages] = useState([
     { id: 1, text: 'Hello! How can I assist you today?', isBot: true },
   ]);
   const [userInput, setUserInput] = useState('');
+  const scrollViewRef = useRef();
 
   const handleSendMessage = () => {
     if (userInput.trim() === '') return;
 
-    const newMessage = { id: messages.length + 1, text: userInput, isBot: false };
-    setMessages([...messages, newMessage]);
+    const newMessage = {
+      id: messages.length + 1,
+      text: userInput,
+      isBot: false
+    };
 
-    // Simulate bot response
+    setMessages(prev => [...prev, newMessage]);
+
+    // Simulate a smart bot response
     setTimeout(() => {
-      const botResponse = { id: messages.length + 2, text: 'I am here to help!', isBot: true };
-      setMessages((prevMessages) => [...prevMessages, botResponse]);
-    }, 1000);
+      const responseText = generateBotReply(userInput);
+      const botResponse = {
+        id: messages.length + 2,
+        text: responseText,
+        isBot: true
+      };
+      setMessages(prev => [...prev, botResponse]);
+    }, 800);
 
     setUserInput('');
   };
 
+  const generateBotReply = (input) => {
+    if (input.toLowerCase().includes('help')) return 'Sure! I can assist with your queries.';
+    if (input.toLowerCase().includes('thanks')) return 'You’re welcome!';
+    return 'I’m here to assist further!';
+  };
+
+  useEffect(() => {
+    scrollViewRef.current?.scrollToEnd({ animated: true });
+  }, [messages]);
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.header}>ChatBot Assistant</Text>
-      
-      <ScrollView contentContainerStyle={styles.messageContainer}>
-        {messages.map((message) => (
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      style={styles.container}
+      keyboardVerticalOffset={80}
+    >
+      <View style={styles.header}>
+        <Text style={styles.headerText}>ChatBot Assistant</Text>
+      </View>
+
+      <ScrollView
+        style={styles.messagesWrapper}
+        contentContainerStyle={styles.messageContainer}
+        ref={scrollViewRef}
+      >
+        {messages.map(message => (
           <View
             key={message.id}
             style={[
               styles.message,
-              message.isBot ? styles.botMessage : styles.userMessage,
+              message.isBot ? styles.botMessage : styles.userMessage
             ]}
           >
             <Text style={styles.messageText}>{message.text}</Text>
@@ -44,6 +78,7 @@ const ChatBotScreen = () => {
         <TextInput
           style={styles.input}
           placeholder="Type your message..."
+          placeholderTextColor="#888"
           value={userInput}
           onChangeText={setUserInput}
         />
@@ -51,32 +86,43 @@ const ChatBotScreen = () => {
           <Text style={styles.sendButtonText}>Send</Text>
         </TouchableOpacity>
       </View>
-    </View>
+    </KeyboardAvoidingView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
-    backgroundColor: '#f3f4f6',
+    backgroundColor: '#E8F5E9',
   },
   header: {
-    fontSize: 24,
+    backgroundColor: '#1B5E20',
+    paddingVertical: 20,
+    paddingHorizontal: 15,
+    elevation: 5,
+  },
+  headerText: {
+    fontSize: 22,
+    color: '#fff',
     fontWeight: 'bold',
-    color: '#1D4ED8',
     textAlign: 'center',
-    marginVertical: 20,
+  },
+  messagesWrapper: {
+    flex: 1,
+    paddingHorizontal: 10,
   },
   messageContainer: {
-    flexGrow: 1,
-    paddingBottom: 10,
+    paddingVertical: 10,
   },
   message: {
-    maxWidth: '75%',
-    padding: 10,
-    borderRadius: 15,
+    maxWidth: '80%',
+    padding: 12,
+    borderRadius: 16,
     marginBottom: 10,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    elevation: 2,
   },
   botMessage: {
     backgroundColor: '#2563EB',
@@ -93,31 +139,31 @@ const styles = StyleSheet.create({
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 10,
+    padding: 12,
     borderTopWidth: 1,
-    borderTopColor: '#ccc',
-    paddingVertical: 10,
+    borderTopColor: '#ddd',
+    backgroundColor: '#fff',
   },
   input: {
     flex: 1,
-    height: 40,
-    paddingHorizontal: 10,
-    borderRadius: 20,
-    backgroundColor: '#fff',
-    borderWidth: 1,
+    height: 45,
+    paddingHorizontal: 15,
+    borderRadius: 25,
+    backgroundColor: '#f0f0f0',
     borderColor: '#ccc',
+    borderWidth: 1,
     marginRight: 10,
   },
   sendButton: {
-    backgroundColor: '#1D4ED8',
-    paddingHorizontal: 20,
+    backgroundColor: '#1B5E20',
     paddingVertical: 10,
-    borderRadius: 20,
+    paddingHorizontal: 18,
+    borderRadius: 25,
   },
   sendButtonText: {
     color: '#fff',
-    fontSize: 16,
     fontWeight: '600',
+    fontSize: 15,
   },
 });
 
