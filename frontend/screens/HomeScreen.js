@@ -1,12 +1,5 @@
 import React, { useRef } from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  ScrollView,
-  Animated,
-} from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Animated, TextInput } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
 
@@ -30,74 +23,108 @@ const HomeScreen = () => {
   };
 
   const modules = [
-    { name: 'AI Assistant (Chatbot)', screen: 'ChatBotScreen', icon: 'chatbubble-ellipses-outline' },
-    { name: 'Complaint System', screen: 'ComplaintForm', icon: 'alert-circle-outline' },
-    { name: 'Emergency & Health', screen: 'EmergencyScreen', icon: 'medkit-outline' },
-    { name: 'Disaster Alert System', screen: 'DisasterAlert', icon: 'warning-outline' },
+    { name: 'AI Sahayak', screen: 'ChatBotScreen', icon: 'chatbubble-ellipses-outline' },
+    { name: 'File Complaint', screen: 'ComplaintForm', icon: 'alert-circle-outline' },
+    { name: 'Health Support', screen: 'Emergency', icon: 'medkit-outline' },
+    { name: 'Disaster Alerts', screen: 'DisasterAlert', icon: 'warning-outline' },
     { name: 'Tourist Guide', screen: 'TouristGuide', icon: 'map-outline' },
     { name: 'Farmer Support', screen: 'FarmerHelp', icon: 'leaf-outline' },
-    { name: 'Public Voice', screen: 'PublicVoice', icon: 'megaphone-outline' },
-    { name: 'Admin Dashboard', screen: 'AdminDashboard', icon: 'bar-chart-outline' },
+    { name: 'Gram Sabha', screen: 'PublicVoice', icon: 'megaphone-outline' },
+    { name: 'Education', screen: 'Education', icon: 'book-outline' },
   ];
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
+     
+
       <Text style={styles.subtitle}>Your AI-powered assistant for public services</Text>
 
-      {modules.map((mod, index) => (
-        <TouchableOpacity
-          key={index}
-          style={styles.moduleButton}
-          onPress={() => {
-            animateButton();
-            navigation.navigate(mod.screen);
-          }}
-        >
-          <Animated.View style={[{ transform: [{ scale }] }, styles.animatedBtn]}>
-            <Icon name={mod.icon} size={24} color="#ffffff" style={{ marginRight: 10 }} />
-            <Text style={styles.buttonText}>{mod.name}</Text>
-          </Animated.View>
-        </TouchableOpacity>
-      ))}
+      {/* Grid Layout for Modules */}
+      <View style={styles.gridContainer}>
+        {modules.map((mod, index) => (
+          <TouchableOpacity
+            key={index}
+            style={styles.moduleCard}
+            onPress={() => {
+              animateButton();
+              navigation.navigate(mod.screen);
+            }}
+          >
+            <Animated.View style={[{ transform: [{ scale }] }, styles.animatedBtn]}>
+              <Icon name={mod.icon} size={40} color="#ffffff" />
+              <Text style={styles.moduleText}>{mod.name}</Text>
+            </Animated.View>
+          </TouchableOpacity>
+        ))}
+      </View>
     </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     paddingTop: 30,
     paddingBottom: 30,
     alignItems: 'center',
     backgroundColor: '#F7F8F3', // Off-white neutral
     paddingHorizontal: 20,
   },
+  searchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: '100%',
+    marginBottom: 20,
+    paddingHorizontal: 10,
+  },
+  searchInput: {
+    flex: 1,
+    height: 40,
+    borderColor: '#2D6A4F',
+    borderWidth: 1,
+    borderRadius: 20,
+    paddingHorizontal: 15,
+    fontSize: 16,
+    backgroundColor: '#ffffff',
+  },
+  micIcon: {
+    marginLeft: 10,
+    padding: 8,
+    backgroundColor: '#E0F2F1', // Light green background for mic icon
+    borderRadius: 50,
+  },
   subtitle: {
     fontSize: 18,
     color: '#023047', // Midnight Blue
-    fontFamily: 'sans-serif', // Default system font
+    fontFamily: 'sans-serif',
     marginBottom: 30,
     textAlign: 'center',
   },
-  moduleButton: {
-    backgroundColor: '#2D6A4F', // Primary Color
-    width: '100%',
-    paddingVertical: 14,
-    marginBottom: 15,
-    borderRadius: 12,
-    alignItems: 'center',
-    elevation: 3,
+  gridContainer: {
     flexDirection: 'row',
-    justifyContent: 'center',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    width: '100%',
   },
-  buttonText: {
-    color: '#ffffff',
-    fontSize: 18,
-    fontWeight: '600',
-    fontFamily: 'sans-serif', // Default system font
+  moduleCard: {
+    width: '48%', // To make cards fit in two columns
+    marginBottom: 15,
+    borderRadius: 15,
+    backgroundColor: '#2D6A4F',
+    padding: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 5,
   },
   animatedBtn: {
-    flexDirection: 'row',
     alignItems: 'center',
+  },
+  moduleText: {
+    color: '#ffffff',
+    fontSize: 16,
+    fontWeight: '500',
+    marginTop: 10,
+    textAlign: 'center',
   },
 });
 
