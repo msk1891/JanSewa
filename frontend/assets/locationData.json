@@ -1,0 +1,98 @@
+{
+    "Rishikesh": {
+      "Sites": [
+        { "name": "Laxman Jhula", "description": "Historic bridge over the Ganges", "icon": "map-outline" },
+        { "name": "Triveni Ghat", "description": "Spiritual Ganga Aarti", "icon": "water-outline" }
+      ],
+      "Food": [
+        { "name": "Chotiwala Restaurant", "description": "Iconic vegetarian dining", "icon": "restaurant-outline" }
+      ],
+      "Events": [
+        { "name": "Yoga Festival", "description": "Held every March", "icon": "body-outline" }
+      ]
+    },
+    "Nainital": {
+      "Sites": [
+        { "name": "Naini Lake", "description": "Boating and serene views", "icon": "boat-outline" }
+      ],
+      "Food": [
+        { "name": "Sonam’s Momos", "description": "Tibetan-style snacks", "icon": "fast-food-outline" }
+      ],
+      "Events": [
+        { "name": "Winter Carnival", "description": "Music, dance & local art", "icon": "snow-outline" }
+      ]
+    },
+    "Mussoorie": {
+      "Sites": [
+        { "name": "Kempty Falls", "description": "Popular waterfall picnic spot", "icon": "water-outline" },
+        { "name": "Gun Hill", "description": "Cable car views of Doon Valley", "icon": "trail-sign-outline" }
+      ],
+      "Food": [
+        { "name": "Cafe Ivy", "description": "Popular café with scenic views", "icon": "cafe-outline" }
+      ],
+      "Events": [
+        { "name": "Summer Festival", "description": "Music, drama, and crafts", "icon": "musical-notes-outline" }
+      ]
+    },
+    "Haridwar": {
+      "Sites": [
+        { "name": "Har Ki Pauri", "description": "Major Ganga Aarti site", "icon": "flame-outline" },
+        { "name": "Chandi Devi Temple", "description": "Hilltop temple with ropeway", "icon": "home-outline" }
+      ],
+      "Food": [
+        { "name": "Hoshiyar Puri", "description": "North Indian thalis", "icon": "restaurant-outline" }
+      ],
+      "Events": [
+        { "name": "Kumbh Mela", "description": "Mass Hindu pilgrimage every 12 years", "icon": "people-outline" }
+      ]
+    },
+    "Auli": {
+      "Sites": [
+        { "name": "Auli Ski Resort", "description": "Popular skiing destination", "icon": "snow-outline" },
+        { "name": "Gurso Bugyal", "description": "Scenic alpine meadow", "icon": "image-outline" }
+      ],
+      "Food": [
+        { "name": "GMVN Restaurant", "description": "Local Garhwali cuisine", "icon": "fast-food-outline" }
+      ],
+      "Events": [
+        { "name": "National Ski Championship", "description": "Held in winter", "icon": "trophy-outline" }
+      ]
+    },
+    "Kedarnath": {
+      "Sites": [
+        { "name": "Kedarnath Temple", "description": "Sacred Hindu shrine", "icon": "church-outline" },
+        { "name": "Vasuki Tal", "description": "High-altitude glacial lake", "icon": "water-outline" }
+      ],
+      "Food": [
+        { "name": "Langar Service", "description": "Free temple meals", "icon": "restaurant-outline" }
+      ],
+      "Events": [
+        { "name": "Opening Ceremony", "description": "Seasonal temple opening", "icon": "calendar-outline" }
+      ]
+    },
+    "Almora": {
+      "Sites": [
+        { "name": "Bright End Corner", "description": "Sunset point and views", "icon": "sunset-outline" },
+        { "name": "Kasar Devi Temple", "description": "Magnetic field zone", "icon": "home-outline" }
+      ],
+      "Food": [
+        { "name": "Lali’s Inn", "description": "Local Kumaoni dishes", "icon": "restaurant-outline" }
+      ],
+      "Events": [
+        { "name": "Jageshwar Monsoon Festival", "description": "Traditional music & dance", "icon": "rainy-outline" }
+      ]
+    },
+    "Jim Corbett": {
+      "Sites": [
+        { "name": "Corbett Safari", "description": "Tiger spotting in national park", "icon": "paw-outline" },
+        { "name": "Garjiya Devi Temple", "description": "Located on a hill rock in river", "icon": "terrain-outline" }
+      ],
+      "Food": [
+        { "name": "The Dhikala Canteen", "description": "Eco-tourism style meal", "icon": "nutrition-outline" }
+      ],
+      "Events": [
+        { "name": "Wildlife Photography Camp", "description": "Workshops in summer", "icon": "camera-outline" }
+      ]
+    }
+  }
+  
