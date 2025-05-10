@@ -24,7 +24,7 @@ const HomeScreen = () => {
 
   const modules = [
     { name: 'AI Sahayak', screen: 'ChatBotScreen', icon: 'chatbubble-ellipses-outline' },
-    { name: 'File Complaint', screen: 'ComplaintForm', icon: 'alert-circle-outline' },
+    { name: 'File Complaint', screen: 'ComplaintScreen', icon: 'alert-circle-outline' },
     { name: 'Health Support', screen: 'Emergency', icon: 'medkit-outline' },
     { name: 'Disaster Alerts', screen: 'DisasterAlert', icon: 'warning-outline' },
     { name: 'Tourist Guide', screen: 'TouristGuide', icon: 'map-outline' },

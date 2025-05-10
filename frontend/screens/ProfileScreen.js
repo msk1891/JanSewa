@@ -13,9 +13,9 @@ const ProfileScreen = () => {
   const route = useRoute();
   const navigation = useNavigation(); // Hook for navigation
   
-  const userName = route.params?.name || 'Guest';
+  const userName = route.params?.name || 'Prerna Mishra';
   const userRole = route.params?.role || 'Seva Seeker'; // Either Seva Provider or Seva Seeker
-  const userLocation = route.params?.location || 'Dehradun, Uttarakhand';
+  const userLocation = route.params?.location || 'Roorkee, Uttarakhand';
 
   // Handle Log Out
   const handleLogout = () => {
@@ -33,7 +33,7 @@ const ProfileScreen = () => {
         <View style={styles.profileBlockNoImage}>
           <View style={styles.profileDetails}>
             <Text style={styles.name}>{userName}</Text>
-            <Text style={styles.email}>user@example.com</Text>
+            <Text style={styles.email}>mishraprerna505@gmail.com</Text>
             <Text style={styles.location}>{userLocation}</Text>
           </View>
           <View style={styles.roleTag}>
