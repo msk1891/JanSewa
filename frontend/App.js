@@ -22,7 +22,10 @@ import TouristGuide from './screens/TouristGuide';
 import DisasterAlert from './screens/DisasterAlert';
 import Emergency from './screens/Emergency';
 import Education from './screens/Education';
-
+import AcademicResources from './screens/AcademicResources';
+import CareerAdvisor from './screens/CareerAdvisor';
+import SchoolFinder from './screens/SchoolFinder';
+import DoubtChatbot from './screens/DoubtChatbot';
 
 const Stack = createNativeStackNavigator();
 
@@ -79,7 +82,7 @@ export default function App() {
           <Stack.Screen name="PolicyPal" component={ScreenWrapper(PolicyPalScreen)} />
           <Stack.Screen name="SahayataAI" component={ScreenWrapper(SahayataAIScreen)} />
           <Stack.Screen name="ChatBotScreen" component={ScreenWrapper(ChatBotScreen)} />
-          <Stack.Screen name="ComplaintForm" component={ScreenWrapper(ComplaintScreen)} />
+          <Stack.Screen name="ComplaintScreen" component={ScreenWrapper(ComplaintScreen)} />
           <Stack.Screen name="Profile" component={ScreenWrapper(ProfileScreen)} />
           <Stack.Screen name="PublicVoice" component={ScreenWrapper(PublicVoice)} />
           <Stack.Screen name="FarmerHelp" component={ScreenWrapper(FarmerHelp)} />
@@ -87,17 +90,10 @@ export default function App() {
           <Stack.Screen name="DisasterAlert" component={ScreenWrapper(DisasterAlert)} />
           <Stack.Screen name="Emergency" component={ScreenWrapper(Emergency)} />
           <Stack.Screen name="Education" component={ScreenWrapper(Education)} />
-
-          
-
-        
-
-          
-         
-
-          
-
-          
+          <Stack.Screen name="AcademicResources" component={ScreenWrapper(AcademicResources)} />
+          <Stack.Screen name="CareerAdvisor" component={ScreenWrapper(CareerAdvisor)} />          
+          <Stack.Screen name="SchoolFinder" component={ScreenWrapper(SchoolFinder)} />
+          <Stack.Screen name="DoubtChatbot" component={ScreenWrapper(DoubtChatbot)} />
         </Stack.Navigator>
       </NavigationContainer>
     </SafeAreaProvider>
