@@ -14,26 +14,26 @@ import {
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
-
+import { useTranslation } from 'react-i18next';
 
 const LoginScreen = ({ navigation }) => {
+  const { t, i18n } = useTranslation();
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [selectedLanguage, setSelectedLanguage] = useState('en');
-  
+  const [selectedLanguage, setSelectedLanguage] = useState(i18n.language);
 
-  // Function to handle language change
   const handleLanguageChange = (lang) => {
-    setSelectedLanguage(lang);  // Update the selected language
-    i18n.changeLanguage(lang);  // Dynamically change the language
+    setSelectedLanguage(lang); // update language
+    i18n.changeLanguage(lang);
   };
 
   const handleLogin = async () => {
     if (!email || !password) {
-      setError('Email and password are required');
+      setError('errorEmpty');
       return;
     }
 
@@ -48,7 +48,7 @@ const LoginScreen = ({ navigation }) => {
       navigation.replace('Home');
     } catch (error) {
       console.error('Login error:', error);
-      setError('Invalid email or password');
+      setError('errorInvalid');
     } finally {
       setLoading(false);
     }
@@ -56,18 +56,18 @@ const LoginScreen = ({ navigation }) => {
 
   return (
     <ImageBackground
-      source={require('../assets/uttarakhand.jpg')} // Replace with your scenic Uttarakhand image
+      source={require('../assets/uttarakhand.jpg')}
       style={styles.container}
     >
       <View style={styles.overlay}>
         <ScrollView contentContainerStyle={styles.inner}>
-          <Text style={styles.title}>AI Seva: Uttarakhand Smart Assistant</Text>
+          <Text style={styles.title}>{t('loginTitle')}</Text>
 
-          {error ? <Text style={styles.errorText}>{error}</Text> : null}
+          {error ? <Text style={styles.errorText}>{t(error)}</Text> : null}
 
           <TextInput
             style={styles.input}
-            placeholder="Email"
+            placeholder={t('emailPlaceholder')}
             value={email}
             onChangeText={setEmail}
             keyboardType="email-address"
@@ -78,38 +78,32 @@ const LoginScreen = ({ navigation }) => {
           <View style={styles.passwordContainer}>
             <TextInput
               style={styles.passwordInput}
-              placeholder="Password"
+              placeholder={t('passwordPlaceholder')}
               value={password}
               onChangeText={setPassword}
               secureTextEntry={!showPassword}
               placeholderTextColor="#999"
             />
             <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-              <Text style={styles.showPassword}>{showPassword ? 'Hide' : 'Show'}</Text>
+              <Text style={styles.showPassword}>{showPassword ? t('hide') : t('show')}</Text>
             </TouchableOpacity>
           </View>
 
           <TouchableOpacity style={styles.button} onPress={handleLogin} disabled={loading}>
-            {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.buttonText}>Login</Text>}
+            {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.buttonText}>{t('loginButton')}</Text>}
           </TouchableOpacity>
 
           <TouchableOpacity onPress={() => navigation.navigate('Register')}>
-            <Text style={styles.link}>
-              Don't have an account? <Text style={styles.linkText}>Register</Text>
-            </Text>
+            <Text style={styles.link}>{t('registerText')} <Text style={styles.linkText}>{t('registerLink')}</Text></Text>
           </TouchableOpacity>
 
-          {/* Language  Selection */}
           <View style={styles.languageRoleContainer}>
-            <Text style={styles.languageRoleText}>Select Language</Text>
+            <Text style={styles.languageRoleText}>{t('selectLanguage')}</Text>
             <View style={styles.languageButtons}>
               {['en', 'hi', 'ga', 'ku'].map((lang) => (
                 <TouchableOpacity
                   key={lang}
-                  style={[
-                    styles.languageButton,
-                    selectedLanguage === lang && styles.selectedLanguageButton,
-                  ]}
+                  style={[styles.languageButton, selectedLanguage === lang && styles.selectedLanguageButton]}
                   onPress={() => handleLanguageChange(lang)}
                 >
                   <Text style={styles.languageButtonText}>
@@ -133,7 +127,7 @@ const styles = StyleSheet.create({
   },
   overlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Slightly dark overlay for better contrast
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
     justifyContent: 'center',
     paddingHorizontal: 20,
   },
@@ -201,8 +195,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 25,
     elevation: 5,
-    transform: [{ scale: 1 }],
-    transition: 'all 0.3s ease-in-out',
   },
   buttonText: {
     color: '#fff',
