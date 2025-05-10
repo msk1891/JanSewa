@@ -21,6 +21,7 @@ import FarmerHelp from './screens/FarmerHelp';
 import TouristGuide from './screens/TouristGuide';
 import DisasterAlert from './screens/DisasterAlert';
 import Emergency from './screens/Emergency';
+import Education from './screens/Education';
 
 
 const Stack = createNativeStackNavigator();
@@ -85,6 +86,9 @@ export default function App() {
           <Stack.Screen name="TouristGuide" component={ScreenWrapper(TouristGuide)} />
           <Stack.Screen name="DisasterAlert" component={ScreenWrapper(DisasterAlert)} />
           <Stack.Screen name="Emergency" component={ScreenWrapper(Emergency)} />
+          <Stack.Screen name="Education" component={ScreenWrapper(Education)} />
+
+          
 
         
 

@@ -1,124 +1,160 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, ScrollView, Image, StyleSheet } from 'react-native';
+import * as Speech from 'expo-speech';
+import { Ionicons } from '@expo/vector-icons';
 
-const ChatBotScreen = () => {
+export default function ChatBotScreen() {
   const [messages, setMessages] = useState([
-    { id: 1, text: 'Hello! How can I assist you today?', isBot: true },
+    { text: 'नमस्ते! मैं आपकी क्या सहायता कर सकता हूँ?', sender: 'bot' },
   ]);
-  const [userInput, setUserInput] = useState('');
+  const [inputText, setInputText] = useState('');
+  const [isRecording, setIsRecording] = useState(false);
+  const [language, setLanguage] = useState('hi'); // Default to Hindi
 
-  const handleSendMessage = () => {
-    if (userInput.trim() === '') return;
+  const handleSend = async () => {
+    if (!inputText.trim()) return;
 
-    const newMessage = { id: messages.length + 1, text: userInput, isBot: false };
-    setMessages([...messages, newMessage]);
+    const userMessage = { text: inputText.trim(), sender: 'user' };
+    const botReply = await fetchBotReply(inputText);
 
-    // Simulate bot response
-    setTimeout(() => {
-      const botResponse = { id: messages.length + 2, text: 'I am here to help!', isBot: true };
-      setMessages((prevMessages) => [...prevMessages, botResponse]);
-    }, 1000);
+    setMessages((prev) => [...prev, userMessage, { text: botReply, sender: 'bot' }]);
+    setInputText('');
 
-    setUserInput('');
+    Speech.speak(botReply, { language });
+  };
+
+  const fetchBotReply = async (message) => {
+    try {
+      // Simulate API call to OpenAI or local model
+      return `आपने पूछा: "${message}". यह जवाब डेमो के लिए है।`;
+    } catch (err) {
+      return 'सर्वर से उत्तर प्राप्त नहीं हो सका।';
+    }
+  };
+
+  const handleMicPress = async () => {
+    setIsRecording((prev) => !prev);
+    // You can use speech-to-text integration here
+    alert('🎤 Voice input coming soon!');
+  };
+
+  const changeLanguage = () => {
+    const nextLang = language === 'hi' ? 'en' : language === 'en' ? 'pa-Guru-IN' : 'hi';
+    setLanguage(nextLang);
+    alert(`Language switched to: ${nextLang}`);
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>ChatBot Assistant</Text>
-      
-      <ScrollView contentContainerStyle={styles.messageContainer}>
-        {messages.map((message) => (
+      {/* Header */}
+      <View style={styles.header}>
+        <View style={styles.headerLeft}>
+          <Ionicons name="chatbubbles" size={28} color="#22c55e" />
+          <Text style={styles.headerTitle}>AI Sahayak</Text>
+        </View>
+        <TouchableOpacity onPress={changeLanguage}>
+          <Ionicons name="globe-outline" size={24} color="#64748b" />
+        </TouchableOpacity>
+      </View>
+
+      {/* Chat Window */}
+      <ScrollView style={styles.chatWindow} showsVerticalScrollIndicator={false}>
+        {messages.map((msg, idx) => (
           <View
-            key={message.id}
+            key={idx}
             style={[
-              styles.message,
-              message.isBot ? styles.botMessage : styles.userMessage,
+              styles.messageBubble,
+              msg.sender === 'user' ? styles.userBubble : styles.botBubble,
             ]}
           >
-            <Text style={styles.messageText}>{message.text}</Text>
+            <Text style={styles.messageText}>{msg.text}</Text>
           </View>
         ))}
       </ScrollView>
 
+      {/* Input Area */}
       <View style={styles.inputContainer}>
         <TextInput
-          style={styles.input}
+          style={styles.textInput}
           placeholder="Type your message..."
-          value={userInput}
-          onChangeText={setUserInput}
+          value={inputText}
+          onChangeText={setInputText}
         />
-        <TouchableOpacity style={styles.sendButton} onPress={handleSendMessage}>
-          <Text style={styles.sendButtonText}>Send</Text>
+        <TouchableOpacity onPress={handleSend}>
+          <Ionicons name="send" size={24} color="#3b82f6" />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={handleMicPress} style={styles.micButton}>
+          <Ionicons
+            name={isRecording ? 'mic-off' : 'mic'}
+            size={24}
+            color={isRecording ? 'red' : '#16a34a'}
+          />
         </TouchableOpacity>
       </View>
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
-    backgroundColor: '#f3f4f6',
+    backgroundColor: '#ffffff',
+    padding: 16,
   },
   header: {
-    fontSize: 24,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  headerLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  headerTitle: {
+    fontSize: 20,
     fontWeight: 'bold',
-    color: '#1D4ED8',
-    textAlign: 'center',
-    marginVertical: 20,
+    marginLeft: 8,
+    color: '#1f2937',
   },
-  messageContainer: {
-    flexGrow: 1,
-    paddingBottom: 10,
+  chatWindow: {
+    flex: 1,
+    marginBottom: 8,
   },
-  message: {
+  messageBubble: {
+    padding: 8,
+    marginVertical: 4,
     maxWidth: '75%',
-    padding: 10,
-    borderRadius: 15,
-    marginBottom: 10,
+    borderRadius: 16,
   },
-  botMessage: {
-    backgroundColor: '#2563EB',
-    alignSelf: 'flex-start',
-  },
-  userMessage: {
-    backgroundColor: '#34D399',
+  userBubble: {
+    backgroundColor: '#dbeafe',
     alignSelf: 'flex-end',
   },
+  botBubble: {
+    backgroundColor: '#bbf7d0',
+    alignSelf: 'flex-start',
+  },
   messageText: {
-    color: '#fff',
     fontSize: 16,
+    color: '#1f2937',
   },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 10,
-    borderTopWidth: 1,
-    borderTopColor: '#ccc',
-    paddingVertical: 10,
   },
-  input: {
+  textInput: {
     flex: 1,
-    height: 40,
-    paddingHorizontal: 10,
-    borderRadius: 20,
-    backgroundColor: '#fff',
+    borderColor: '#d1d5db',
     borderWidth: 1,
-    borderColor: '#ccc',
-    marginRight: 10,
-  },
-  sendButton: {
-    backgroundColor: '#1D4ED8',
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: 20,
-  },
-  sendButtonText: {
-    color: '#fff',
+    borderRadius: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    marginRight: 8,
     fontSize: 16,
-    fontWeight: '600',
+    backgroundColor: '#f9fafb',
+  },
+  micButton: {
+    marginLeft: 8,
   },
 });
-
-export default ChatBotScreen;
