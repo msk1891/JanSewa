@@ -1,3 +1,4 @@
+// TouristGuide.jsx
 import React, { useState } from 'react';
 import {
   View,
@@ -8,8 +9,8 @@ import {
   TextInput,
   ScrollView,
 } from 'react-native';
-import MapView, { Marker } from 'react-native-maps';
 import Icon from 'react-native-vector-icons/Ionicons';
+import locationData from '../assets/locationData.json';
 
 const TouristGuide = () => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -18,43 +19,59 @@ const TouristGuide = () => {
   const [interest, setInterest] = useState('');
   const [itinerary, setItinerary] = useState('');
   const [language, setLanguage] = useState('English');
+  const [selectedLocation, setSelectedLocation] = useState('Rishikesh');
 
   const handleGenerate = () => {
-    setItinerary(`🗺 Based on your interest in "${interest}" for ${duration} days, visit:
-1. Rishikesh Ganga Aarti
-2. Chopta Valley Trek
-3. Local Garhwali Cuisine trail in Mussoorie`);
+    if (!duration || !interest) return;
+    setItinerary(`🗺 Based on your interest in "${interest}" for ${duration} days in ${selectedLocation}, visit:
+1. ${selectedLocation} Main Attraction
+2. Hidden Gem
+3. Local Experience`);
   };
 
   const switchLanguage = () => {
-    const next = language === 'English' ? 'Hindi' : language === 'Hindi' ? 'Garhwali' : 'English';
-    setLanguage(next);
+    const langs = ['English', 'Hindi', 'Garhwali', 'Kumaoni'];
+    const next = (langs.indexOf(language) + 1) % langs.length;
+    setLanguage(langs[next]);
   };
 
-  const culturalMarkers = [
-    { lat: 30.124, lng: 78.321, label: 'Rishikesh Ghat' },
-    { lat: 30.398, lng: 79.061, label: 'Chopta' },
-    { lat: 30.459, lng: 78.067, label: 'Mussoorie Food Street' },
-  ];
+  const current = locationData[selectedLocation];
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.header}>🎒 Uttarakhand Tourist Guide</Text>
-      <Text style={styles.subtext}>Plan your journey with AI + explore cultural treasures.</Text>
+      <Text style={styles.heroTitle}>🌄 Explore Uttarakhand</Text>
+      <Text style={styles.heroSubtitle}>Your AI-powered cultural companion</Text>
 
       <View style={styles.buttonRow}>
-        <TouchableOpacity onPress={() => setModalVisible(true)} style={styles.featureBtn}>
-          <Icon name="sparkles-outline" size={24} color="#fff" />
-          <Text style={styles.featureText}>AI Itinerary</Text>
+        <TouchableOpacity onPress={() => setModalVisible(true)} style={styles.actionBtn}>
+          <Icon name="sparkles-outline" size={20} color="#fff" />
+          <Text style={styles.actionText}>AI Plan</Text>
         </TouchableOpacity>
-
-        <TouchableOpacity onPress={switchLanguage} style={styles.featureBtn}>
-          <Icon name="language-outline" size={24} color="#fff" />
-          <Text style={styles.featureText}>Lang: {language}</Text>
+        <TouchableOpacity onPress={switchLanguage} style={styles.actionBtn}>
+          <Icon name="language-outline" size={20} color="#fff" />
+          <Text style={styles.actionText}>Lang: {language}</Text>
         </TouchableOpacity>
       </View>
 
-      {/* Tab View */}
+      <Text style={styles.sectionTitle}>📍 Locations</Text>
+      <View style={styles.chipRow}>
+        {Object.keys(locationData).map((loc) => (
+          <TouchableOpacity
+            key={loc}
+            style={[
+              styles.chip,
+              selectedLocation === loc && styles.chipSelected
+            ]}
+            onPress={() => setSelectedLocation(loc)}
+          >
+            <Text style={selectedLocation === loc ? styles.chipTextActive : styles.chipText}>
+              {loc}
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+
+      <Text style={styles.sectionTitle}>🔍 Discover</Text>
       <View style={styles.tabRow}>
         {['Sites', 'Food', 'Events'].map((t) => (
           <TouchableOpacity
@@ -67,72 +84,49 @@ const TouristGuide = () => {
         ))}
       </View>
 
-      {/* Tab Content */}
-      <View style={styles.tabContent}>
-        {tab === 'Sites' && (
-          <Text style={styles.tabInfo}>
-            • Kedarnath Temple{'\n'}• Valley of Flowers{'\n'}• Tehri Lake & Adventure Park
-          </Text>
-        )}
-        {tab === 'Food' && (
-          <Text style={styles.tabInfo}>
-            • Aloo Ke Gutke{'\n'}• Jhangora Kheer{'\n'}• Local thalis at Pauri, Almora
-          </Text>
-        )}
-        {tab === 'Events' && (
-          <Text style={styles.tabInfo}>
-            • Nanda Devi Fair - Sep{'\n'}• Bikhauti Mela - April{'\n'}• Ganga Dussehra
-          </Text>
-        )}
+      <View style={styles.card}>
+        {current[tab].map((item, idx) => (
+          <View key={idx} style={styles.cardItem}>
+            <Icon name={item.icon || 'location-outline'} size={18} color="#196795" />
+            <View>
+              <Text style={styles.itemTitle}>{item.name}</Text>
+              <Text style={styles.itemDesc}>{item.description}</Text>
+            </View>
+          </View>
+        ))}
       </View>
 
-      {/* Map */}
-      <View style={styles.mapContainer}>
-        <MapView
-          style={styles.map}
-          initialRegion={{
-            latitude: 30.3,
-            longitude: 78.1,
-            latitudeDelta: 1.5,
-            longitudeDelta: 1.5,
-          }}
-        >
-          {culturalMarkers.map((m, index) => (
-            <Marker
-              key={index}
-              coordinate={{ latitude: m.lat, longitude: m.lng }}
-              title={m.label}
-              pinColor="#E91E63"
-            />
-          ))}
-        </MapView>
-      </View>
-
-      {/* Itinerary Modal */}
       <Modal visible={modalVisible} animationType="slide" transparent>
         <View style={styles.modalOverlay}>
           <View style={styles.modalBox}>
-            <Text style={styles.modalTitle}>🧭 Generate Your Itinerary</Text>
+            <Text style={styles.modalTitle}>🧭 Plan Itinerary</Text>
+
+            <Text style={styles.modalLabel}>Days</Text>
             <TextInput
               style={styles.input}
-              placeholder="Number of days"
+              placeholder="e.g., 3"
               keyboardType="numeric"
               value={duration}
               onChangeText={setDuration}
             />
+
+            <Text style={styles.modalLabel}>Interest</Text>
             <TextInput
               style={styles.input}
-              placeholder="Your interest (trekking, temples...)"
+              placeholder="e.g., temples, hiking, food"
               value={interest}
               onChangeText={setInterest}
             />
-            <TouchableOpacity style={styles.generateBtn} onPress={handleGenerate}>
-              <Text style={styles.generateText}>Generate</Text>
+
+            <TouchableOpacity onPress={handleGenerate} style={styles.generateBtn}>
+              <Text style={styles.generateText}>🎯 Generate</Text>
             </TouchableOpacity>
 
-            {itinerary ? <Text style={styles.itineraryText}>{itinerary}</Text> : null}
+            {itinerary ? (
+              <Text style={styles.itineraryText}>{itinerary}</Text>
+            ) : null}
 
-            <TouchableOpacity style={styles.closeBtn} onPress={() => setModalVisible(false)}>
+            <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.closeBtn}>
               <Text style={styles.closeText}>Close</Text>
             </TouchableOpacity>
           </View>
@@ -143,134 +137,93 @@ const TouristGuide = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    padding: 20,
-    backgroundColor: '#F4F9F9',
-  },
-  header: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#1A73E8',
-    textAlign: 'center',
-  },
-  subtext: {
-    textAlign: 'center',
-    color: '#555',
-    marginVertical: 10,
-  },
-  buttonRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginVertical: 15,
-  },
-  featureBtn: {
+  container: { padding: 16, backgroundColor: '#f9f9ff' },
+  heroTitle: { fontSize: 24, fontWeight: 'bold', color: '#196795', textAlign: 'center' },
+  heroSubtitle: { fontSize: 14, color: '#555', textAlign: 'center', marginBottom: 16 },
+
+  sectionTitle: { fontSize: 18, fontWeight: '600', marginTop: 20, marginBottom: 8 },
+
+  buttonRow: { flexDirection: 'row', justifyContent: 'space-around', marginBottom: 12 },
+  actionBtn: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#1A73E8',
-    paddingHorizontal: 14,
-    paddingVertical: 8,
+    gap: 6,
+    padding: 10,
+    backgroundColor: '#196795',
     borderRadius: 10,
-  },
-  featureText: {
-    color: '#fff',
-    fontWeight: '600',
-    marginLeft: 6,
-  },
-  tabRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginTop: 10,
-  },
-  tabBtn: {
-    paddingVertical: 8,
-    paddingHorizontal: 20,
-    borderRadius: 20,
-    backgroundColor: '#ddd',
-  },
-  tabActive: {
-    backgroundColor: '#1A73E8',
-  },
-  tabText: {
-    color: '#333',
-    fontWeight: '600',
-  },
-  tabTextActive: {
-    color: '#fff',
-  },
-  tabContent: {
-    marginVertical: 15,
-    padding: 15,
-    backgroundColor: '#fff',
-    borderRadius: 10,
-    elevation: 2,
-  },
-  tabInfo: {
-    fontSize: 15,
-    lineHeight: 22,
-    color: '#444',
-  },
-  mapContainer: {
-    height: 250,
-    borderRadius: 15,
-    overflow: 'hidden',
-    marginBottom: 30,
-  },
-  map: {
-    width: '100%',
-    height: '100%',
-  },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.3)',
+    minWidth: '40%',
     justifyContent: 'center',
-    alignItems: 'center',
+  },
+  actionText: { color: '#fff', fontWeight: 'bold' },
+
+  chipRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+  chip: {
+    paddingVertical: 6,
+    paddingHorizontal: 14,
+    backgroundColor: '#eee',
+    borderRadius: 20,
+  },
+  chipSelected: {
+    backgroundColor: '#196795',
+  },
+  chipText: { color: '#333' },
+  chipTextActive: { color: '#fff', fontWeight: 'bold' },
+
+  tabRow: { flexDirection: 'row', justifyContent: 'center', gap: 10 },
+  tabBtn: { padding: 10, borderRadius: 8 },
+  tabActive: { backgroundColor: '#196795' },
+  tabText: { fontSize: 14, fontWeight: 'bold', color: '#196795' },
+  tabTextActive: { color: '#fff' },
+
+  card: {
+    backgroundColor: '#fff',
+    padding: 14,
+    borderRadius: 12,
+    marginTop: 10,
+    elevation: 3,
+    gap: 10,
+  },
+  cardItem: {
+    flexDirection: 'row',
+    gap: 10,
+    alignItems: 'flex-start',
+  },
+  itemTitle: { fontWeight: 'bold', color: '#222' },
+  itemDesc: { fontSize: 12, color: '#666' },
+
+  modalOverlay: {
+    flex: 1, justifyContent: 'center', backgroundColor: 'rgba(0,0,0,0.4)'
   },
   modalBox: {
-    width: '85%',
+    margin: 20,
     backgroundColor: '#fff',
-    borderRadius: 16,
     padding: 20,
+    borderRadius: 12,
+    gap: 10,
+  },
+  modalTitle: { fontSize: 18, fontWeight: 'bold', color: '#196795', marginBottom: 10 },
+  modalLabel: { fontWeight: '600', marginTop: 10 },
+
+  input: {
+    borderWidth: 1,
+    borderColor: '#ccc',
+    padding: 10,
+    borderRadius: 8,
+    backgroundColor: '#f5f5f5',
+  },
+
+  generateBtn: {
+    backgroundColor: '#196795',
+    padding: 12,
+    borderRadius: 10,
+    marginTop: 10,
     alignItems: 'center',
   },
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 10,
-  },
-  input: {
-    width: '100%',
-    padding: 10,
-    borderRadius: 10,
-    borderColor: '#ccc',
-    borderWidth: 1,
-    marginVertical: 6,
-  },
-  generateBtn: {
-    backgroundColor: '#388E3C',
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: 10,
-    marginTop: 8,
-  },
-  generateText: {
-    color: '#fff',
-    fontWeight: '600',
-  },
-  itineraryText: {
-    marginTop: 15,
-    color: '#2E7D32',
-    textAlign: 'center',
-  },
-  closeBtn: {
-    marginTop: 20,
-    backgroundColor: '#555',
-    paddingHorizontal: 20,
-    paddingVertical: 8,
-    borderRadius: 8,
-  },
-  closeText: {
-    color: '#fff',
-  },
+  generateText: { color: '#fff', fontWeight: 'bold' },
+
+  itineraryText: { marginTop: 10, fontSize: 14, lineHeight: 20, color: '#333' },
+  closeBtn: { marginTop: 10, alignItems: 'center' },
+  closeText: { color: '#e33', fontWeight: 'bold' },
 });
 
-export default TouristGuide;
+export default TouristGuide;
