@@ -1,11 +1,7 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet, Alert } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, ScrollView, Image, StyleSheet } from 'react-native';
 import * as Speech from 'expo-speech';
 import { Ionicons } from '@expo/vector-icons';
-import { DEEPSEEK_API_KEY, ASSEMBLYAI_API_KEY } from 'react-native-dotenv';  // Import environment variables
-
-// You'll need to install 'expo-speech' and set up AssemblyAI integration
-// npm install expo-speech
 
 export default function ChatBotScreen() {
   const [messages, setMessages] = useState([
@@ -13,74 +9,39 @@ export default function ChatBotScreen() {
   ]);
   const [inputText, setInputText] = useState('');
   const [isRecording, setIsRecording] = useState(false);
-  const [language, setLanguage] = useState('hi'); // Default language: Hindi
+  const [language, setLanguage] = useState('hi'); // Default to Hindi
 
   const handleSend = async () => {
     if (!inputText.trim()) return;
 
     const userMessage = { text: inputText.trim(), sender: 'user' };
-    setMessages((prev) => [...prev, userMessage]);
-    setInputText('');
-
     const botReply = await fetchBotReply(inputText);
-    setMessages((prev) => [...prev, { text: botReply, sender: 'bot' }]);
+
+    setMessages((prev) => [...prev, userMessage, { text: botReply, sender: 'bot' }]);
+    setInputText('');
 
     Speech.speak(botReply, { language });
   };
 
   const fetchBotReply = async (message) => {
     try {
-      const response = await fetch('https://api.deepseek.com/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${DEEPSEEK_API_KEY}`, // Use the DeepSeek API key from .env
-        },
-        body: JSON.stringify({
-          model: 'deepseek-chat',
-          messages: [{ role: 'user', content: message }],
-        }),
-      });
-
-      const data = await response.json();
-      return data?.choices?.[0]?.message?.content || 'कोई उत्तर नहीं मिला।';
-    } catch (error) {
-      console.error(error);
+      // Simulate API call to OpenAI or local model
+      return आपने पूछा: "${message}". यह जवाब डेमो के लिए है।;
+    } catch (err) {
       return 'सर्वर से उत्तर प्राप्त नहीं हो सका।';
     }
   };
 
   const handleMicPress = async () => {
     setIsRecording((prev) => !prev);
-
-    try {
-      // 🔐 Use your AssemblyAI API key here
-      // Use AssemblyAI's real-time transcription API to convert speech to text
-      const response = await fetch('https://api.assemblyai.com/v2/upload', {
-        method: 'POST',
-        headers: {
-          'authorization': ASSEMBLYAI_API_KEY, // Use the AssemblyAI API key from .env
-        },
-        body: JSON.stringify({
-          // For example, sending audio to AssemblyAI for transcription
-          // This is a simplified example; you'd need actual audio data in a real case
-        }),
-      });
-
-      const data = await response.json();
-      console.log(data); // Log response from AssemblyAI
-
-      Alert.alert('🎤 Speech-to-text', 'AssemblyAI integration coming soon!');
-    } catch (error) {
-      console.error('Speech recognition error:', error);
-      Alert.alert('त्रुटि', 'वॉइस इनपुट असफल रहा।');
-    }
+    // You can use speech-to-text integration here
+    alert('🎤 Voice input coming soon!');
   };
 
   const changeLanguage = () => {
     const nextLang = language === 'hi' ? 'en' : language === 'en' ? 'pa-Guru-IN' : 'hi';
     setLanguage(nextLang);
-    Alert.alert('भाषा बदली गई', `नई भाषा: ${nextLang}`);
+    alert(Language switched to: ${nextLang});
   };
 
   return (
