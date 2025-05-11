@@ -14,7 +14,7 @@ import {
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
-import { useTranslation } from 'react-i18next';
+
 
 const LoginScreen = ({ navigation }) => {
   const { t, i18n } = useTranslation();
@@ -23,12 +23,11 @@ const LoginScreen = ({ navigation }) => {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [selectedLanguage, setSelectedLanguage] = useState(i18n.language);
+  
 
   const handleLanguageChange = (lang) => {
     setSelectedLanguage(lang); // update language
-    i18n.changeLanguage(lang);
+
   };
 
   const handleLogin = async () => {
