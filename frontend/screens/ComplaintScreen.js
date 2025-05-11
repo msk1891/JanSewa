@@ -11,7 +11,6 @@ const departments = [
   { label: 'Electricity', value: 'electricity' },
   { label: 'Roads', value: 'roads' },
   { label: 'Health', value: 'health' },
-  { label: 'Sanitation', value: 'sanitation' },
   { label: 'Other', value: 'other' },
 ];
 
