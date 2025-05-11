@@ -1,27 +1,48 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform, ActivityIndicator, Alert } from 'react-native';
 
-const careerMap = {
-  ai: ['AI Researcher', 'Machine Learning Engineer', 'Data Scientist'],
-  design: ['UI/UX Designer', 'Graphic Designer', 'Product Designer'],
-  coding: ['Software Developer', 'Full-Stack Engineer', 'Backend Developer'],
-  writing: ['Content Writer', 'Technical Writer', 'Copywriter'],
-  business: ['Product Manager', 'Business Analyst', 'Marketing Strategist'],
-};
+// Assuming you have set up the OpenAI API key somewhere
+const OPENAI_API_KEY = 'YOUR_OPENAI_API_KEY';
 
 const CareerAdvisor = () => {
   const [interest, setInterest] = useState('');
   const [recommendation, setRecommendation] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleRecommendation = () => {
+  const handleRecommendation = async () => {
     if (!interest.trim()) {
-      setRecommendation('Please enter your interest.');
+      Alert.alert('Error', 'Please enter your interest.', [{ text: 'OK' }]);
       return;
     }
 
-    const key = interest.toLowerCase().trim();
-    const careers = careerMap[key] || ['Entrepreneur', 'Freelancer', 'Consultant'];
-    setRecommendation(`Based on your interest in "${interest}", you could explore: ${careers.join(', ')}.`);
+    setIsLoading(true); // Start loading
+
+    try {
+      // Make an API request to OpenAI's GPT-3 to get career suggestions
+      const response = await fetch('https://api.openai.com/v1/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${OPENAI_API_KEY}`,
+        },
+        body: JSON.stringify({
+          model: 'text-davinci-003', // GPT-3 model
+          prompt: `Based on the user's input, suggest a list of careers. User input: "${interest}"`,
+          max_tokens: 100,
+          temperature: 0.7,
+        }),
+      });
+
+      const data = await response.json();
+      const aiResponse = data.choices[0].text.trim();
+
+      // Set the recommendation to the AI-generated response
+      setRecommendation(aiResponse);
+    } catch (error) {
+      Alert.alert('Error', 'Something went wrong. Please try again later.', [{ text: 'OK' }]);
+    } finally {
+      setIsLoading(false); // Stop loading
+    }
   };
 
   return (
@@ -34,9 +55,18 @@ const CareerAdvisor = () => {
           value={interest}
           onChangeText={setInterest}
         />
-        <TouchableOpacity style={styles.button} onPress={handleRecommendation}>
-          <Text style={styles.buttonText}>Get Recommendations</Text>
+        <TouchableOpacity 
+          style={styles.button} 
+          onPress={handleRecommendation} 
+          disabled={isLoading} // Disable button when loading
+        >
+          <Text style={styles.buttonText}>
+            {isLoading ? 'Loading...' : 'Get Recommendations'}
+          </Text>
         </TouchableOpacity>
+
+        {isLoading && <ActivityIndicator size="large" color="#219EBC" style={styles.loader} />}
+        
         {recommendation ? <Text style={styles.recommendation}>{recommendation}</Text> : null}
       </View>
     </KeyboardAvoidingView>
@@ -59,6 +89,9 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 3 },
     shadowRadius: 6,
     elevation: 4,
+    width: '100%',
+    maxWidth: 400, // Ensure it doesn't stretch too wide
+    alignSelf: 'center',
   },
   header: {
     fontSize: 26,
@@ -74,6 +107,7 @@ const styles = StyleSheet.create({
     padding: 10,
     marginBottom: 20,
     fontSize: 16,
+    width: '100%',
   },
   button: {
     backgroundColor: '#219EBC',
@@ -93,6 +127,11 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 10,
     fontStyle: 'italic',
+  },
+  loader: {
+    marginTop: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 
