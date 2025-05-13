@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -8,14 +8,37 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { useRoute, useNavigation } from '@react-navigation/native';
+import axios from 'axios';
 
 const ProfileScreen = () => {
   const route = useRoute();
-  const navigation = useNavigation(); // Hook for navigation
-  
-  const userName = route.params?.name || 'Prerna Mishra';
-  const userRole = route.params?.role || 'Seva Seeker'; // Either Seva Provider or Seva Seeker
-  const userLocation = route.params?.location || 'Roorkee, Uttarakhand';
+  const navigation = useNavigation();
+
+  // State to store user data
+  const [user, setUser] = useState({
+    name: 'Guest User',
+    email: 'guest@example.com',
+    location: 'Unknown Location',
+    role: 'Seva Seeker',
+  });
+
+  // Fetch user data on mount
+  useEffect(() => {
+    const userId = route.params?.userId; // Assuming the userId is passed in route params
+
+    if (userId) {
+      // Fetch user data from backend
+      axios
+        .get(`http://localhost:5000/api/user/${userId}`)
+        .then((response) => {
+          const { name, email, location, role } = response.data;
+          setUser({ name, email, location, role });
+        })
+        .catch((error) => {
+          console.error("Error fetching user data: ", error);
+        });
+    }
+  }, [route.params]);
 
   // Handle Log Out
   const handleLogout = () => {
@@ -29,35 +52,33 @@ const ProfileScreen = () => {
   return (
     <ScrollView style={styles.container}>
       {/* Header */}
-      <View style={styles.headerWrapper}>
-        <View style={styles.profileBlockNoImage}>
-          <View style={styles.profileDetails}>
-            <Text style={styles.name}>{userName}</Text>
-            <Text style={styles.email}>mishraprerna505@gmail.com</Text>
-            <Text style={styles.location}>{userLocation}</Text>
+      <View style={styles.header}>
+        <View style={styles.profileCard}>
+          <View style={styles.profileInfo}>
+            <Text style={styles.name}>{user.name}</Text>
+            <Text style={styles.email}>{user.email}</Text>
+            <Text style={styles.location}>{user.location}</Text>
           </View>
-          <View style={styles.roleTag}>
-            <Text style={styles.roleText}>{userRole}</Text>
+          <View style={styles.roleBadge}>
+            <Text style={styles.roleText}>{user.role}</Text>
           </View>
         </View>
       </View>
 
-      {/* Stats Section */}
+      {/* Stats */}
       <View style={styles.statsRow}>
-        {renderStat('Services Provided', '0', 'Activate', 'gray')}
-        {renderStat('Active Requests', '0 ', 'Explore', 'gray')}
-        {renderStat('Balance', '₹0', 'Earn.', 'gray')}
+        <Stat label="Services Provided" value="0" note="Activate" color="gray" />
+        <Stat label="Active Requests" value="0" note="Explore" color="gray" />
+        <Stat label="Balance" value="₹0" note="Earn." color="gray" />
       </View>
 
-      {/* Menu Section */}
+      {/* Menu */}
       <View style={styles.menu}>
-        {renderMenuItem('My Services', 'business-outline')}
-        {renderMenuItem('Notifications', 'notifications-outline')}
-        {renderMenuItem('Government Schemes', 'flag-outline')}
-        {renderMenuItem('Settings', 'settings-outline')}
-        {renderMenuItem('Help Center', 'help-circle-outline')}
-        
-        {/* Log out button */}
+        <MenuItem icon="business-outline" title="My Services" />
+        <MenuItem icon="notifications-outline" title="Notifications" />
+        <MenuItem icon="flag-outline" title="Government Schemes" />
+        <MenuItem icon="settings-outline" title="Settings" />
+        <MenuItem icon="help-circle-outline" title="Help Center" />
         <TouchableOpacity style={styles.menuItem} onPress={handleLogout}>
           <Icon name="log-out-outline" size={22} color="#333" />
           <Text style={styles.menuText}>Log out</Text>
@@ -67,18 +88,18 @@ const ProfileScreen = () => {
   );
 };
 
-// Reusable stat component
-const renderStat = (label, value, change, changeColor) => (
-  <View style={styles.statCard} key={label}>
+// Stats component
+const Stat = ({ label, value, note, color }) => (
+  <View style={styles.statCard}>
     <Text style={styles.statLabel}>{label}</Text>
     <Text style={styles.statValue}>{value}</Text>
-    <Text style={[styles.statChange, { color: changeColor }]}>{change}</Text>
+    <Text style={[styles.statNote, { color }]}>{note}</Text>
   </View>
 );
 
-// Reusable menu item
-const renderMenuItem = (title, icon) => (
-  <TouchableOpacity style={styles.menuItem} key={title}>
+// MenuItem component
+const MenuItem = ({ title, icon }) => (
+  <TouchableOpacity style={styles.menuItem}>
     <Icon name={icon} size={22} color="#333" />
     <Text style={styles.menuText}>{title}</Text>
   </TouchableOpacity>
@@ -90,11 +111,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#f9fafb',
     paddingTop: 1,
   },
-  headerWrapper: {
+  header: {
     paddingHorizontal: 10,
     marginBottom: 10,
   },
-  profileBlockNoImage: {
+  profileCard: {
     backgroundColor: '#fff',
     borderRadius: 10,
     padding: 16,
@@ -103,7 +124,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
   },
-  profileDetails: {
+  profileInfo: {
     flex: 1,
     marginRight: 16,
   },
@@ -121,7 +142,7 @@ const styles = StyleSheet.create({
     color: '#444',
     marginTop: 4,
   },
-  roleTag: {
+  roleBadge: {
     backgroundColor: '#e6f0ff',
     paddingVertical: 4,
     paddingHorizontal: 10,
@@ -156,7 +177,7 @@ const styles = StyleSheet.create({
     color: '#000',
     marginVertical: 4,
   },
-  statChange: {
+  statNote: {
     fontSize: 13,
     fontWeight: '500',
   },
