@@ -1,35 +1,36 @@
-// routes/ProfileRoutes.js
 const express = require('express');
+const Profile = require('../models/Profile'); 
 const router = express.Router();
-const Profile = require('../models/Profile');
 
-// GET profile by email (or you can use ID)
-router.get('/:email', async (req, res) => {
+// GET request to fetch user profile by ID
+router.get('/:id', async (req, res) => {
   try {
-    const profile = await Profile.findOne({ email: req.params.email });
-    if (!profile) return res.status(404).json({ message: 'Profile not found' });
-    res.json(profile);
+    const user = await Profile.findById(req.params.id); // Find user by ID
+    if (!user) {
+      return res.status(404).send({ message: 'User not found' });
+    }
+    res.json(user); // Return user data
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error(err);
+    res.status(500).send({ message: 'Server error' });
   }
 });
 
-// POST create or update profile
+// POST request to create/update user profile
 router.post('/', async (req, res) => {
-  const { name, email, location, role } = req.body;
   try {
-    let profile = await Profile.findOne({ email });
-    if (profile) {
-      profile.name = name;
-      profile.location = location;
-      profile.role = role;
-    } else {
-      profile = new Profile({ name, email, location, role });
-    }
-    await profile.save();
-    res.status(200).json(profile);
+    const { name, email, location, role } = req.body;
+    const newUser = new Profile({
+      name,
+      email,
+      location,
+      role,
+    });
+    await newUser.save();
+    res.status(201).json(newUser); // Send back the newly created profile
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error(err);
+    res.status(500).send({ message: 'Error creating user profile' });
   }
 });
 
