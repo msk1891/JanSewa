@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Linking, TextInput } from 'react-native';
-import MapView, { Marker } from 'react-native-maps';
+import React, { useEffect, useState } from 'react';
+import { View, Text, ScrollView, TouchableOpacity, TextInput, Linking, StyleSheet } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import MapView, { Marker } from 'react-native-maps';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 const DisasterAlerts = () => {
@@ -9,6 +9,7 @@ const DisasterAlerts = () => {
   const [aiResponse, setAIResponse] = useState('');
   const [chatOpen, setChatOpen] = useState(false);
   const [userQuery, setUserQuery] = useState('');
+  const [lastUpdated, setLastUpdated] = useState('');
 
   useEffect(() => {
     loadCachedAlerts();
@@ -16,13 +17,32 @@ const DisasterAlerts = () => {
   }, []);
 
   const fetchLiveAlerts = async () => {
-    const dummyAlerts = [
+  const alertOptions = [
+    [
       { id: '1', type: 'Flood Warning', level: 'Red', location: 'Rishikesh' },
-      { id: '2', type: 'Heavy Rain', level: 'Orange', location: 'Nainital' },
-    ];
-    setAlerts(dummyAlerts);
-    await AsyncStorage.setItem('cachedAlerts', JSON.stringify(dummyAlerts));
-  };
+      { id: '2', type: 'Heavy Rainfall', level: 'Orange', location: 'Nainital' },
+    ],
+    [
+      { id: '3', type: 'Landslide Alert', level: 'Red', location: 'Chamoli' },
+      { id: '4', type: 'Earthquake Tremors', level: 'Green', location: 'Dehradun' },
+    ],
+    [
+      { id: '5', type: 'Flash Flood Alert', level: 'Red', location: 'Pauri' },
+      { id: '6', type: 'Cloudburst Warning', level: 'Orange', location: 'Tehri' },
+    ],
+    [
+      { id: '7', type: 'Storm Warning', level: 'Orange', location: 'Haridwar' },
+      { id: '8', type: 'River Overflow Risk', level: 'Red', location: 'Almora' },
+    ]
+  ];
+
+  // Pick a random alert set
+  const randomSet = alertOptions[Math.floor(Math.random() * alertOptions.length)];
+  setAlerts(randomSet);
+  await AsyncStorage.setItem('cachedAlerts', JSON.stringify(randomSet));
+  setLastUpdated(new Date().toLocaleTimeString());
+};
+
 
   const loadCachedAlerts = async () => {
     const cached = await AsyncStorage.getItem('cachedAlerts');
@@ -43,6 +63,21 @@ const DisasterAlerts = () => {
     { title: 'Landslide Safety Tips', url: 'https://example.com/landslide-guide.pdf' },
   ];
 
+  const getCoordinates = (location) => {
+    switch (location) {
+      case 'Rishikesh': return { latitude: 30.117, longitude: 78.323 };
+      case 'Nainital': return { latitude: 29.3919, longitude: 79.4542 };
+      case 'Chamoli': return { latitude: 30.5, longitude: 79.5 };
+      case 'Dehradun': return { latitude: 30.3165, longitude: 78.0322 };
+      case 'Pauri': return { latitude: 30.15, longitude: 78.78 };
+      case 'Tehri': return { latitude: 30.38, longitude: 78.48 };
+      case 'Haridwar': return { latitude: 29.9457, longitude: 78.1642 };
+      case 'Almora': return { latitude: 29.5970, longitude: 79.6591 };
+
+      default: return { latitude: 30.3165, longitude: 78.0322 };
+    }
+  };
+
   const handleAIQuery = () => {
     const reply = userQuery.toLowerCase().includes('safe') ?
       "📍 Nearby shelters: Community Hall, Panchayat Bhavan, Local School." :
@@ -54,6 +89,12 @@ const DisasterAlerts = () => {
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <Text style={styles.title}>🌪 Disaster Alerts & Safety</Text>
+
+        {/* Refresh + Last Updated */}
+        <TouchableOpacity onPress={fetchLiveAlerts} style={styles.refreshButton}>
+          <Text style={styles.refreshText}>🔄 Refresh Alerts</Text>
+        </TouchableOpacity>
+        {lastUpdated && <Text style={styles.updatedAt}>Last updated: {lastUpdated}</Text>}
 
         {/* Alerts */}
         <View style={styles.section}>
@@ -85,12 +126,18 @@ const DisasterAlerts = () => {
             initialRegion={{
               latitude: 30.3165,
               longitude: 78.0322,
-              latitudeDelta: 0.5,
-              longitudeDelta: 0.5,
+              latitudeDelta: 1,
+              longitudeDelta: 1,
             }}
           >
-            <Marker coordinate={{ latitude: 30.34, longitude: 78.04 }} title="Govt Shelter" pinColor="green" />
-            <Marker coordinate={{ latitude: 29.39, longitude: 79.45 }} title="Danger Zone" pinColor="red" />
+            {alerts.map((alert, index) => (
+              <Marker
+                key={index}
+                coordinate={getCoordinates(alert.location)}
+                title={`${alert.type} (${alert.level})`}
+                pinColor={getLevelStyle(alert.level).color}
+              />
+            ))}
           </MapView>
         </View>
 
@@ -137,124 +184,50 @@ const DisasterAlerts = () => {
   );
 };
 
+export default DisasterAlerts;
+
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#F0F4F8' },
-  scrollContent: { padding: 16, paddingBottom: 100 },
-  title: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    color: '#1A73E8',
-    textAlign: 'center',
-    marginBottom: 12,
-  },
-  section: { marginBottom: 24 },
-  sectionTitle: { fontSize: 18, fontWeight: '600', marginBottom: 8, color: '#333' },
-
+  container: { flex: 1, backgroundColor: '#f4f6f8' },
+  scrollContent: { padding: 16 },
+  title: { fontSize: 22, fontWeight: 'bold', marginBottom: 10 },
+  section: { marginTop: 20 },
+  sectionTitle: { fontSize: 18, fontWeight: 'bold', marginBottom: 8 },
   alertCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#fff',
-    borderRadius: 10,
-    padding: 12,
-    marginBottom: 10,
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
+    flexDirection: 'row', backgroundColor: '#fff', padding: 12, borderRadius: 10,
+    marginBottom: 10, shadowColor: '#000', shadowOpacity: 0.1, shadowRadius: 4, elevation: 2,
   },
-  alertLeft: { marginRight: 10 },
+  alertLeft: { justifyContent: 'center', marginRight: 10 },
   alertBody: { flex: 1 },
-  alertType: { fontSize: 16, fontWeight: '500', color: '#333' },
-  alertLocation: { fontSize: 13, color: '#666' },
-  alertRight: {},
-
-  map: {
-    height: 220,
-    borderRadius: 10,
-    marginTop: 6,
-  },
-  pdfButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#E8F0FE',
-    padding: 10,
-    borderRadius: 6,
-    marginBottom: 6,
-  },
-  pdfText: {
-    color: '#1A73E8',
-    marginLeft: 8,
-    fontWeight: '500',
-  },
-
-  fab: {
-    position: 'absolute',
-    bottom: 24,
-    right: 20,
-    backgroundColor: '#1A73E8',
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 10,
-    paddingHorizontal: 16,
-    borderRadius: 50,
-    elevation: 6,
-  },
-  fabLabel: {
-    color: '#fff',
-    fontWeight: '600',
-    marginLeft: 8,
-  },
-
+  alertType: { fontWeight: 'bold', fontSize: 16 },
+  alertLocation: { color: '#555' },
+  alertRight: { justifyContent: 'center' },
+  map: { height: 250, borderRadius: 12 },
+  pdfButton: { flexDirection: 'row', alignItems: 'center', marginBottom: 10 },
+  pdfText: { marginLeft: 6, color: '#1A73E8', textDecorationLine: 'underline' },
   chatPopup: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    backgroundColor: '#fff',
-    borderTopLeftRadius: 16,
-    borderTopRightRadius: 16,
-    padding: 16,
-    elevation: 10,
+    backgroundColor: '#fff', padding: 16, borderRadius: 12, marginTop: 20,
+    shadowColor: '#000', shadowOpacity: 0.2, shadowRadius: 6, elevation: 4,
   },
-  chatTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    marginBottom: 10,
-    color: '#1A73E8',
-  },
+  chatTitle: { fontSize: 16, fontWeight: 'bold', marginBottom: 10 },
   input: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    padding: 10,
-    borderRadius: 6,
-    marginBottom: 10,
-    backgroundColor: '#F9FAFB',
+    borderWidth: 1, borderColor: '#ccc', borderRadius: 8, padding: 8, marginBottom: 10,
   },
   sendButton: {
-    backgroundColor: '#1A73E8',
-    paddingVertical: 10,
-    borderRadius: 6,
-    alignItems: 'center',
+    backgroundColor: '#1A73E8', padding: 10, borderRadius: 8, alignItems: 'center',
   },
-  sendButtonText: {
-    color: '#fff',
-    fontWeight: '600',
+  sendButtonText: { color: '#fff', fontWeight: 'bold' },
+  aiReply: { marginTop: 10, fontStyle: 'italic', color: '#444' },
+  closeButton: { marginTop: 10, alignItems: 'flex-end' },
+  closeText: { color: '#E53935' },
+  fab: {
+    position: 'absolute', bottom: 20, right: 20, backgroundColor: '#1A73E8',
+    paddingHorizontal: 16, paddingVertical: 10, borderRadius: 30, flexDirection: 'row', alignItems: 'center',
   },
-  aiReply: {
-    marginTop: 10,
-    backgroundColor: '#F1F8E9',
-    padding: 10,
-    borderRadius: 6,
-    color: '#333',
+  fabLabel: { color: '#fff', marginLeft: 6 },
+  refreshButton: {
+    alignSelf: 'flex-start', backgroundColor: '#e0e0e0',
+    paddingHorizontal: 10, paddingVertical: 6, borderRadius: 8, marginBottom: 6,
   },
-  closeButton: {
-    marginTop: 10,
-    alignSelf: 'center',
-  },
-  closeText: {
-    color: '#999',
-    fontSize: 14,
-  },
+  refreshText: { fontSize: 14 },
+  updatedAt: { fontSize: 12, color: '#666' },
 });
-
-export default DisasterAlerts;

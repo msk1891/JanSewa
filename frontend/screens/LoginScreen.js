@@ -27,10 +27,57 @@ const LoginScreen = ({ navigation }) => {
 
   // Function to handle language change
   const handleLanguageChange = (lang) => {
-    setSelectedLanguage(lang);  // Update the selected language
-    i18n.changeLanguage(lang);  // Dynamically change the language
+  setSelectedLanguage(lang);  // Only update local state
+};
+
+  const translations = {
+    en: {
+      title: 'AI Seva: Uttarakhand Smart Assistant',
+      email: 'Email',
+      password: 'Password',
+      login: 'Login',
+      registerPrompt: "Don't have an account?",
+      registerLink: 'Register',
+      selectLang: 'Select Language',
+      show: 'Show',
+      hide: 'Hide',
+    },
+    hi: {
+      title: 'एआई सेवा: उत्तराखंड स्मार्ट सहायक',
+      email: 'ईमेल',
+      password: 'पासवर्ड',
+      login: 'लॉग इन करें',
+      registerPrompt: 'खाता नहीं है?',
+      registerLink: 'पंजीकरण करें',
+      selectLang: 'भाषा चुनें',
+      show: 'दिखाएँ',
+      hide: 'छिपाएँ',
+    },
+    ga: {
+      title: 'AI सेवा: उत्तराखंड स्मार्ट सहायक',
+      email: 'ईमेल',
+      password: 'पासवर्ड',
+      login: 'लॉग इन',
+      registerPrompt: 'खाता नि छै?',
+      registerLink: 'रजिस्टर करा',
+      selectLang: 'भासा छनो',
+      show: 'देखा',
+      hide: 'छुपा',
+    },
+    ku: {
+      title: 'AI सेवा: उत्तराखंड स्मार्ट सहायता',
+      email: 'ईमेल',
+      password: 'पासवर्ड',
+      login: 'लॉगिन कर्या',
+      registerPrompt: 'खाता नी छै?',
+      registerLink: 'रजिस्टर कर्या',
+      selectLang: 'भाषा छांटौ',
+      show: 'देख',
+      hide: 'लुकै',
+    },
   };
 
+  const t = translations[selectedLanguage];
   const handleLogin = async () => {
     if (!email || !password) {
       setError('Email and password are required');
@@ -39,11 +86,17 @@ const LoginScreen = ({ navigation }) => {
 
     setLoading(true);
     setError('');
+<<<<<<< HEAD
     try {
       const response = await axios.post('http://192.168.1.6:5000/api/auth/login', {
+=======
+   try {
+      const response = await axios.post('http://192.168.43.141:5000/api/auth/login', {
+>>>>>>> 0accf245a7bdc35596d500e116749ebea3c457b4
         email,
         password,
       });
+
       await AsyncStorage.setItem('token', response.data.token);
       navigation.replace('Home');
     } catch (error) {
@@ -54,20 +107,20 @@ const LoginScreen = ({ navigation }) => {
     }
   };
 
-  return (
+   return (
     <ImageBackground
-      source={require('../assets/uttarakhand.jpg')} // Replace with your scenic Uttarakhand image
+      source={require('../assets/uttarakhand.jpg')} // Make sure this path is correct
       style={styles.container}
     >
       <View style={styles.overlay}>
         <ScrollView contentContainerStyle={styles.inner}>
-          <Text style={styles.title}>AI Seva: Uttarakhand Smart Assistant</Text>
+          <Text style={styles.title}>{t.title}</Text>
 
           {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
           <TextInput
             style={styles.input}
-            placeholder="Email"
+            placeholder={t.email}
             value={email}
             onChangeText={setEmail}
             keyboardType="email-address"
@@ -78,30 +131,41 @@ const LoginScreen = ({ navigation }) => {
           <View style={styles.passwordContainer}>
             <TextInput
               style={styles.passwordInput}
-              placeholder="Password"
+              placeholder={t.password}
               value={password}
               onChangeText={setPassword}
               secureTextEntry={!showPassword}
               placeholderTextColor="#999"
             />
             <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-              <Text style={styles.showPassword}>{showPassword ? 'Hide' : 'Show'}</Text>
+              <Text style={styles.showPassword}>
+                {showPassword ? t.hide : t.show}
+              </Text>
             </TouchableOpacity>
           </View>
 
-          <TouchableOpacity style={styles.button} onPress={handleLogin} disabled={loading}>
-            {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.buttonText}>Login</Text>}
+          <TouchableOpacity
+            style={styles.button}
+            onPress={handleLogin}
+            disabled={loading}
+          >
+            {loading ? (
+              <ActivityIndicator color="#fff" />
+            ) : (
+              <Text style={styles.buttonText}>{t.login}</Text>
+            )}
           </TouchableOpacity>
 
           <TouchableOpacity onPress={() => navigation.navigate('Register')}>
             <Text style={styles.link}>
-              Don't have an account? <Text style={styles.linkText}>Register</Text>
+              {t.registerPrompt}{' '}
+              <Text style={styles.linkText}>{t.registerLink}</Text>
             </Text>
           </TouchableOpacity>
 
-          {/* Language  Selection */}
+          {/* Language Selection */}
           <View style={styles.languageRoleContainer}>
-            <Text style={styles.languageRoleText}>Select Language</Text>
+            <Text style={styles.languageRoleText}>{t.selectLang}</Text>
             <View style={styles.languageButtons}>
               {['en', 'hi', 'ga', 'ku'].map((lang) => (
                 <TouchableOpacity
@@ -113,7 +177,13 @@ const LoginScreen = ({ navigation }) => {
                   onPress={() => handleLanguageChange(lang)}
                 >
                   <Text style={styles.languageButtonText}>
-                    {lang === 'en' ? 'English' : lang === 'hi' ? 'Hindi' : lang === 'ga' ? 'Garhwali' : 'Kumaoni'}
+                    {lang === 'en'
+                      ? 'English'
+                      : lang === 'hi'
+                      ? 'Hindi'
+                      : lang === 'ga'
+                      ? 'Garhwali'
+                      : 'Kumaoni'}
                   </Text>
                 </TouchableOpacity>
               ))}
@@ -265,4 +335,8 @@ const styles = StyleSheet.create({
   },
 });
 
+<<<<<<< HEAD
 export default LoginScreen;
+=======
+export default LoginScreen;
+>>>>>>> 0accf245a7bdc35596d500e116749ebea3c457b4
