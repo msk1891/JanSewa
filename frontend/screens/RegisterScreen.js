@@ -10,7 +10,7 @@ const RegisterScreen = ({ navigation }) => {
 
   const handleRegister = async () => {
     try {
-      await axios.post('http://192.168.43.141:5000/api/auth/register', { 
+      await axios.post('http://192.168.1.6:5000/api/auth/register', { 
         username,
         email,
         password,
