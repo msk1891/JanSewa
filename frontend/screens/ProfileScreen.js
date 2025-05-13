@@ -14,16 +14,28 @@ const ProfileScreen = () => {
     location: 'Unknown Location',
     role: 'Seva Seeker',
   });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // Function to get the token from localStorage or AsyncStorage
+  const getToken = () => {
+    return localStorage.getItem('auth_token'); // Replace with your token retrieval method
+  };
 
   // Fetch user data from the backend on component mount
   useEffect(() => {
     const fetchUserData = async () => {
-      try {
-        // Replace with your token retrieval method
-        const token = 'YOUR_AUTH_TOKEN_HERE';
+      const token = getToken(); // Retrieve the token from localStorage (or AsyncStorage)
 
+      if (!token) {
+        setError('No token found');
+        setLoading(false);
+        return;
+      }
+
+      try {
         // Make an API request to fetch user data
-        const response = await axios.get('http://localhost:5000/api/profile', {
+        const response = await axios.get('http://192.168.43.141:5000/api/profile', {
           headers: {
             Authorization: `Bearer ${token}`, // Send the token in the Authorization header
           },
@@ -41,7 +53,6 @@ const ProfileScreen = () => {
             role: data.role,
           });
         } else {
-          // Fallback to default values if no data returned
           setUser({
             name: 'Guest User',
             email: 'guest@example.com',
@@ -51,14 +62,9 @@ const ProfileScreen = () => {
         }
       } catch (error) {
         console.error("Error fetching user data:", error);
-        // In case of error, fallback to default values
-        setUser({
-          name: 'Guest User',
-          email: 'guest@example.com',
-          location: 'Unknown Location',
-          role: 'Seva Seeker',
-        });
+        setError('Failed to fetch user data');
       }
+      setLoading(false);
     };
 
     fetchUserData();
@@ -78,12 +84,12 @@ const ProfileScreen = () => {
       <View style={styles.header}>
         <View style={styles.profileCard}>
           <View style={styles.profileInfo}>
-            <Text style={styles.name}>{user.name}</Text>
-            <Text style={styles.email}>{user.email}</Text>
-            <Text style={styles.location}>{user.location}</Text>
+            <Text style={styles.name}>{loading ? 'Loading...' : user.name}</Text>
+            <Text style={styles.email}>{loading ? '' : user.email}</Text>
+            <Text style={styles.location}>{loading ? '' : user.location}</Text>
           </View>
           <View style={styles.roleBadge}>
-            <Text style={styles.roleText}>{user.role}</Text>
+            <Text style={styles.roleText}>{loading ? '' : user.role}</Text>
           </View>
         </View>
       </View>
