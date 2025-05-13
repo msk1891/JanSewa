@@ -136,6 +136,16 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontWeight: 'bold',
   },
+  promptButton: {
+    backgroundColor: '#f3f4f6',
+    borderRadius: 20,
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    margin: 4,
+    borderWidth: 1,
+    borderColor: '#e5e7eb',
+  },
+  promptText: { fontSize: 14, color: '#1f2937' },
 });
 
 export default ChatBotScreen;
