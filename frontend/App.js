@@ -27,6 +27,7 @@ import CareerAdvisor from './screens/CareerAdvisor';
 import SchoolFinder from './screens/SchoolFinder';
 import DoubtChatbot from './screens/DoubtChatbot';
 import Aid from './screens/Aid';
+import SafePlace from './screens/SafePlace'
 
 const Stack = createNativeStackNavigator();
 
@@ -96,6 +97,8 @@ export default function App() {
           <Stack.Screen name="SchoolFinder" component={ScreenWrapper(SchoolFinder)} />
           <Stack.Screen name="DoubtChatbot" component={ScreenWrapper(DoubtChatbot)} />
           <Stack.Screen name="Aid" component={ScreenWrapper(Aid)} />
+          <Stack.Screen name="SafePlace" component={ScreenWrapper(SafePlace)} />
+
         </Stack.Navigator>
       </NavigationContainer>
     </SafeAreaProvider>
