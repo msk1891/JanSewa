@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Modal, TextInput, FlatList, Linking, ScrollView } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
+import { useNavigation } from '@react-navigation/native';
 import MapView, { Marker } from 'react-native-maps';
 
 const EmergencySupport = () => {
-  const [aiModalVisible, setAIModalVisible] = useState(false);
-  const [userQuery, setUserQuery] = useState('');
+  const navigation = useNavigation();
+  
   const [aiResponse, setAIResponse] = useState('');
 
   const hospitals = [
@@ -23,10 +24,10 @@ const EmergencySupport = () => {
       <Text style={styles.heading}>🚨 Emergency & Health Support</Text>
 
       {/* First Aid Bot */}
-      <TouchableOpacity style={styles.card} onPress={() => setAIModalVisible(true)}>
-        <Icon name="medkit-outline" size={30} color="#196795" />
-        <Text style={styles.cardText}>First Aid AI Bot</Text>
-      </TouchableOpacity>
+      <TouchableOpacity style={styles.card} onPress={() => navigation.navigate('Aid')}>
+      <Icon name="medkit-outline" size={30} color="#196795" />
+      <Text style={styles.cardText}>First Aid Bot</Text>
+    </TouchableOpacity>
 
       {/* Live Hospital Availability */}
       <Text style={styles.sectionTitle}>🏥 Live Hospital Beds (Mock)</Text>
@@ -87,27 +88,7 @@ const EmergencySupport = () => {
       </View>
 
       {/* AI Modal */}
-      <Modal visible={aiModalVisible} animationType="slide" transparent>
-        <View style={styles.modalContainer}>
-          <View style={styles.modal}>
-            <Text style={styles.modalTitle}>🧠 First Aid AI Chat</Text>
-            <TextInput
-              placeholder="Ask about symptoms or first-aid..."
-              style={styles.input}
-              value={userQuery}
-              onChangeText={setUserQuery}
-              multiline
-            />
-            <TouchableOpacity style={styles.sendButton} onPress={handleAIQuery}>
-              <Text style={styles.sendText}>Ask AI</Text>
-            </TouchableOpacity>
-            {aiResponse ? <Text style={styles.response}>AI: {aiResponse}</Text> : null}
-            <TouchableOpacity onPress={() => setAIModalVisible(false)}>
-              <Text style={styles.close}>Close</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
+     
     </ScrollView>
   );
 };
