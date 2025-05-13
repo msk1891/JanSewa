@@ -1,19 +1,12 @@
-import React, { useEffect, useState } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  ScrollView,
-} from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { useRoute, useNavigation } from '@react-navigation/native';
 import axios from 'axios';
+import { useNavigation } from '@react-navigation/native';
 
 const ProfileScreen = () => {
-  const route = useRoute();
   const navigation = useNavigation();
-
+  
   // State to store user data
   const [user, setUser] = useState({
     name: 'Guest User',
@@ -22,29 +15,59 @@ const ProfileScreen = () => {
     role: 'Seva Seeker',
   });
 
-  // Fetch user data on mount
+  // Fetch user data from the backend on component mount
   useEffect(() => {
-    const userId = route.params?.userId; // Assuming the userId is passed in route params
+    const fetchUserData = async () => {
+      try {
+        // Replace with your token retrieval method
+        const token = 'YOUR_AUTH_TOKEN_HERE';
 
-    if (userId) {
-      // Fetch user data from backend
-      axios
-        .get(`http://localhost:5000/api/user/${userId}`)
-        .then((response) => {
-          const { name, email, location, role } = response.data;
-          setUser({ name, email, location, role });
-        })
-        .catch((error) => {
-          console.error("Error fetching user data: ", error);
+        // Make an API request to fetch user data
+        const response = await axios.get('http://localhost:5000/api/profile', {
+          headers: {
+            Authorization: `Bearer ${token}`, // Send the token in the Authorization header
+          },
         });
-    }
-  }, [route.params]);
+
+        // Check if the data exists before updating state
+        const data = response.data;
+
+        // If data exists, update the state with the fetched data
+        if (data) {
+          setUser({
+            name: data.name,
+            email: data.email,
+            location: data.location,
+            role: data.role,
+          });
+        } else {
+          // Fallback to default values if no data returned
+          setUser({
+            name: 'Guest User',
+            email: 'guest@example.com',
+            location: 'Unknown Location',
+            role: 'Seva Seeker',
+          });
+        }
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+        // In case of error, fallback to default values
+        setUser({
+          name: 'Guest User',
+          email: 'guest@example.com',
+          location: 'Unknown Location',
+          role: 'Seva Seeker',
+        });
+      }
+    };
+
+    fetchUserData();
+  }, []);
 
   // Handle Log Out
   const handleLogout = () => {
     console.log("Logging out...");
     // Perform any necessary cleanup (e.g., clear session, tokens, etc.)
-    // Example: AsyncStorage.clear() if using AsyncStorage to store session data
     // Navigate to the login page after logout
     navigation.navigate('Login'); // Replace 'Login' with your login screen's name
   };
@@ -97,8 +120,8 @@ const Stat = ({ label, value, note, color }) => (
   </View>
 );
 
-// MenuItem component
-const MenuItem = ({ title, icon }) => (
+// Menu item component
+const MenuItem = ({ icon, title }) => (
   <TouchableOpacity style={styles.menuItem}>
     <Icon name={icon} size={22} color="#333" />
     <Text style={styles.menuText}>{title}</Text>
