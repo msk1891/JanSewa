@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Modal, TextInput, FlatList, Linking, ScrollView } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { useNavigation } from '@react-navigation/native';
@@ -9,10 +9,16 @@ const EmergencySupport = () => {
   
   const [aiResponse, setAIResponse] = useState('');
 
-  const hospitals = [
-    { id: '1', name: 'Uttarakhand Govt Hospital', lat: 30.33, lng: 78.04 },
-    { id: '2', name: 'City Clinic', lat: 30.34, lng: 78.06 },
-  ];
+
+
+const [hospitals, setHospitals] = useState([]);
+
+useEffect(() => {
+  fetch('https://run.mocky.io/v3/339f3afc-6bb3-432d-afcd-59c8725d0092')
+    .then(res => res.json())
+    .then(data => setHospitals(data.hospitals))
+    .catch(err => console.error('Error fetching hospitals:', err));
+}, []);
 
   const handleAIQuery = () => {
     // Placeholder AI response
@@ -41,25 +47,30 @@ const EmergencySupport = () => {
         }}
       >
         {hospitals.map(h => (
-          <Marker
-            key={h.id}
-            coordinate={{ latitude: h.lat, longitude: h.lng }}
-            title={h.name}
-            description="Beds available"
-          />
-        ))}
+  <Marker
+    key={h.id}
+    coordinate={{ latitude: h.lat, longitude: h.lng }}
+    title={h.name}
+    description={`${h.bedsAvailable} beds available`}
+  />
+))}
+
       </MapView>
 
       <FlatList
-        data={hospitals}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <View style={styles.hospitalCard}>
-            <Icon name="business-outline" size={24} color="#196795" />
-            <Text style={styles.hospitalText}>{item.name}</Text>
-          </View>
-        )}
-      />
+  data={hospitals}
+  keyExtractor={(item) => item.id}
+  renderItem={({ item }) => (
+    <View style={styles.hospitalCard}>
+      <Icon name="business-outline" size={24} color="#196795" />
+      <View style={{ marginLeft: 10 }}>
+        <Text style={styles.hospitalText}>{item.name}</Text>
+        <Text style={{ color: '#666' }}>Beds Available: {item.bedsAvailable}</Text>
+      </View>
+    </View>
+  )}
+/>
+
 
       {/* Emergency Helplines */}
       <Text style={styles.sectionTitle}>📞 Emergency Helplines</Text>
@@ -81,10 +92,14 @@ const EmergencySupport = () => {
           <Icon name="medical-outline" size={24} color="#196795" />
           <Text style={styles.quickText}>Call Ambulance</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.quickButton}>
+       <TouchableOpacity
+          style={styles.quickButton}
+          onPress={() => Linking.openURL('https://www.google.com/maps/search/pharmacy+near+me')}
+        >
           <Icon name="medkit-outline" size={24} color="#196795" />
           <Text style={styles.quickText}>Nearest Pharmacy</Text>
         </TouchableOpacity>
+
       </View>
 
       {/* AI Modal */}
